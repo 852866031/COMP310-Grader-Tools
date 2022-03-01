@@ -22,7 +22,7 @@ public class Course {
         }
     }
 
-    public void LoadTeamGrade(String filename, int idColNum, int gradeColNum){
+    public void LoadTeamGrade(String filename, double fullScore, double ratio, int idColNum, int gradeColNum){
         try{
             String evaluation = filename.substring(0, filename.length() - 4);
             for(Team team : this.teams){
@@ -40,7 +40,7 @@ public class Course {
                 }
                 String grade = s[gradeColNum];
                 if(grade.length()==0) grade = "0.0";
-                double value = Double.parseDouble(grade);
+                double value = ratio*Double.parseDouble(grade)/fullScore;
                 Team related = Team.searchByID(this.teams, id);
                 if(related != null && ((int)value)!=0) related.setGrade(evaluation, value);
             }
@@ -49,7 +49,7 @@ public class Course {
         }
     }
 
-    public void LoadIndividualGrade(String filename, int idColNum, int gradeColNum){
+    public void LoadIndividualGrade(String filename,  double fullScore, double ratio, int idColNum, int gradeColNum){
         try{
             String evaluation = filename.substring(0, filename.length() - 4);
             for(Student student : this.students){
@@ -67,7 +67,7 @@ public class Course {
                 }
                 String grade = s[gradeColNum];
                 if(grade.length()==0) grade = "0.0";
-                double value = Double.parseDouble(grade);
+                double value = ratio*Double.parseDouble(grade)/fullScore;
                 Student student = Student.searchByID(this.students, id);
                 if(student!=null) student.setGrade(evaluation, value);
             }

@@ -32,10 +32,10 @@ public class GradeBoard {
         ArrayList<String> keys = new ArrayList<>(grades.keySet());
         Collections.sort(keys);
         for(String key : keys){
-            sb.append(grades.get(key));
+            sb.append(String.format("%.2f", grades.get(key)));
             sb.append(",");
         }
-        sb.append(this.overall);
+        sb.append(String.format("%.2f", this.overall));
         return sb.toString();
     }
 

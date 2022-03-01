@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Objects;
-import javax.mail.Session;
 
 public class Group {
     public Student student1;
