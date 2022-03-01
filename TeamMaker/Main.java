@@ -8,8 +8,8 @@ public class Main {
     public static void main(String[] args){
         try{
             ArrayList<Group> groups = new ArrayList<>();
-            ArrayList<Student> students = Student.readStudents("./students.csv");
-            ArrayList<IDPair> idPairs = IDPair.readIDPair("./groups.csv");
+            ArrayList<Student> students = Student.readStudents("students.csv");
+            ArrayList<IDPair> idPairs = IDPair.readIDPair("pairs.csv");
             for(Student s : students){
                 int cur_id = s.id;
                 ArrayList<Integer> matches = IDPair.search(cur_id, idPairs);

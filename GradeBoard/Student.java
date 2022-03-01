@@ -31,8 +31,8 @@ public class Student {
         return null;
     }
 
-    public void setGrade(String evaluation, double v) {
-        this.gradeBoard.put(evaluation, v);
+    public void setGrade(String evaluation, Grade grade) {
+        this.gradeBoard.put(evaluation, grade);
     }
 
     public String getInfo(){
@@ -63,11 +63,4 @@ public class Student {
             }
         }
     }
-
-    @Override
-    public String toString() {
-        return name + "," + id + "," + email + "," + gradeBoard.getGrades();
-    }
-
-
 }

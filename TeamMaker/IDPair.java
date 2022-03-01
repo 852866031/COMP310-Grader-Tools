@@ -20,9 +20,12 @@ public class IDPair {
         String line;
         while ((line = br.readLine()) != null)  {
             String[] s = line.split(",");    // use comma as separator
-            int id1 = Integer.parseInt(s[1]);
-            int id2 = Integer.parseInt(s[3]);
-            pairs.add(new IDPair(id1, id2));
+            try{
+                int id1 = Integer.parseInt(s[1]);
+                int id2 = Integer.parseInt(s[3]);
+                pairs.add(new IDPair(id1, id2));
+            }catch (Exception e){
+            }
         }
         return pairs;
     }

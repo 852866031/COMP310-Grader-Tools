@@ -50,11 +50,11 @@ public class Team {
         return null;
     }
 
-    public void setGrade(String gradeKey, double value){
+    public void setGrade(String gradeKey, Grade grade){
         try {
-            this.gradeBoard.put(gradeKey, value);
-            if(this.student1!=null) this.student1.gradeBoard.put(gradeKey, value);
-            if(this.student2!=null) this.student2.gradeBoard.put(gradeKey, value);
+            this.gradeBoard.put(gradeKey, grade);
+            if(this.student1!=null) this.student1.gradeBoard.put(gradeKey, grade);
+            if(this.student2!=null) this.student2.gradeBoard.put(gradeKey, grade);
         }catch (Exception e){
             e.printStackTrace();
         }
