@@ -10,9 +10,9 @@ public class Main {
         course.LoadIndividualGrade("quiz.csv", 18.0, 10, 0, 1);
         course.sortTeams(CompareStrategy.GRADE);
         course.sortStudent(CompareStrategy.GRADE);
-        course.exportByTeams("TeamScoreBoard.csv", ExportFormat.SCORE);
-        course.exportByStudents("StudentScoreBoard.csv", ExportFormat.SCORE);
-        course.exportByTeams("TeamGradeBoard.csv", ExportFormat.BOTH);
-        course.exportByStudents("StudentGradeBoard.csv", ExportFormat.BOTH);
+        Export.exportByTeams(course,"TeamScoreBoard.csv", ExportFormat.SCORE);
+        Export.exportByStudents(course,"StudentScoreBoard.csv", ExportFormat.SCORE);
+        Export.exportByTeams(course,"TeamGradeBoard.csv", ExportFormat.BOTH);
+        Export.exportByStudents(course,"StudentGradeBoard.csv", ExportFormat.BOTH);
     }
 }

@@ -84,14 +84,4 @@ public class Team {
             }
         }
     }
-
-    @Override
-    public String toString() {
-        if(student2!=null){
-            return student1 + "\n" + student2;
-        }
-        else{
-            return student1.toString();
-        }
-    }
 }

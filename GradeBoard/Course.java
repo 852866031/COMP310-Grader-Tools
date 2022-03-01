@@ -6,9 +6,9 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Course {
-    private final static Course course = new Course();
-    private final ArrayList<Student> students = new ArrayList<>();
-    private ArrayList<Team> teams = new ArrayList<>();
+    public final static Course course = new Course();
+    public final ArrayList<Student> students = new ArrayList<>();
+    public ArrayList<Team> teams = new ArrayList<>();
 
     public static Course getInstance(){
         return course;
@@ -86,45 +86,5 @@ public class Course {
     public void sortStudent(CompareStrategy strategy){
         Student.StudentComparator studentComparator = new Student.StudentComparator(strategy);
         this.students.sort(studentComparator);
-    }
-
-    public void exportByTeams(String filename, ExportFormat format){
-        try{
-            PrintWriter writer = new PrintWriter(filename);
-            writer.write("ID,Name,Email,ID,Name,Email,"+teams.get(0).gradeBoard.getEvaluations()+"\n");
-            for(Team team : this.teams){
-                if(team.student2!=null){
-                    writer.write(team.student1.getInfo()+",");
-                    writer.write(team.student2.getInfo()+",");
-                    writer.write(team.gradeBoard.getGrades(format)+"\n");
-                }
-                else{
-                    writer.write(team.student1.getInfo()+", "+", "+", "+", ");
-                    writer.write(team.gradeBoard.getGrades(format)+"\n");
-                }
-            }
-            writer.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public void exportByStudents(String filename, ExportFormat format){
-        try{
-            PrintWriter writer = new PrintWriter(filename);
-            writer.write("ID,Name,Email,"+students.get(0).gradeBoard.getEvaluations()+"\n");
-            for(Student student : this.students){
-                writer.write(student.getInfo()+","+student.gradeBoard.getGrades(format)+"\n");
-            }
-            writer.close();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    public void printTeams(){
-        for(Team team : teams){
-            System.out.println(team);
-        }
     }
 }

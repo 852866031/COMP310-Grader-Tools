@@ -15,15 +15,6 @@ public class Student {
         this.email =email;
     }
 
-    public static Student searchByID(String id, ArrayList<Student> students){
-        for(Student student : students){
-            if(student.id.contentEquals(id)){
-                return student;
-            }
-        }
-        return null;
-    }
-
     public static Student searchByID(ArrayList<Student> students, String id){
         for(Student student : students){
             if(student.id.contentEquals(id)) return student;
@@ -33,10 +24,6 @@ public class Student {
 
     public void setGrade(String evaluation, Grade grade) {
         this.gradeBoard.put(evaluation, grade);
-    }
-
-    public String getInfo(){
-        return id+","+name+","+email;
     }
 
     public static class StudentComparator implements Comparator<Student> {
