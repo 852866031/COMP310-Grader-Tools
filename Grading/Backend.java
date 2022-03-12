@@ -16,11 +16,20 @@ public class Backend {
     private int current = 0;
     private ArrayList<Test> tests = new ArrayList<>();
     private String testDir;
+    private FileWriter logWriter = null;
 
 
     public Backend(String from, String to) {
         this.workingDir = to;
         this.dataDir = from;
+    }
+
+    public void setCurrent(String input) {
+        int index = 0;
+        try{
+            index = Integer.parseInt(input);
+        }catch (Exception ignored){}
+        this.current = Math.max(0, index-1);
     }
 
     public int countSubmissions(){
@@ -45,12 +54,19 @@ public class Backend {
         current++;
     }
 
-    public void init(){
+    public void init() {
+        try{
+            this.logWriter = new FileWriter("Log.txt");
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
         this.submissions = Submission.init(dataDir, workingDir);
         System.out.println(this.submissions.size()+" submissions parsed and compiled");
     }
 
-    public void printCurrentInfo(){
+    public void saveCurrentInfo(){
+        System.out.println("Submission: "+(current+1)+"/"+submissions.size());
         System.out.println("Current submission: "+submissions.get(current).id);
         System.out.println("Executable: "+submissions.get(current).executable);
     }
@@ -95,6 +111,8 @@ public class Backend {
                 command = "cp "+"Data/testcases/files/"+content+" "+tmp+"/"+content;
                 Runtime.getRuntime().exec(command).waitFor();
             }
+            File binary = new File("Data/tmp/binary");
+            set = binary.setExecutable(true);
             for(Test test : tests){
                 script.write("./binary < "+test.name+" > "+test.name+"_output\n");
             }
@@ -113,6 +131,42 @@ public class Backend {
         return result;
     }
 
+    public void writeFeedback(ArrayList<Compare> tests){
+        Submission cur = submissions.get(current);
+        try {
+            StringBuilder content = new StringBuilder();
+            Submission.mkdir("Data", "feedback");
+            FileWriter myWriter = new FileWriter("Data/feedback/"+cur.id);
+            content.append("Submission of ID: ").append(cur.id);
+            int pass = 0;
+            for(Compare test : tests){
+                if(test.pass) content.append("Pass ").append(test.test.name).append("\n");
+                else content.append("Fail ").append(test.test.name).append("\n");
+                if(test.pass) pass++;
+            }
+            content.append(pass).append("/").append(tests.size()).append(" tests passed\n\n");
+            System.out.println(content.toString());
+            System.out.println("Please write additional feedback: ");
+            String feedback = Frontend.getInput();
+            System.out.println("Do you want to mark the submission? [y/AnyKey]");
+            String mark = Frontend.getInput();
+            if(mark.contentEquals("y")) mark(cur.id);
+            content.append(feedback);
+            myWriter.write(content.toString());
+            myWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void mark(String id){
+        try {
+            logWriter.write(id+" marked\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String readFile(String filename){
         StringBuilder sb = new StringBuilder();
         try {
@@ -120,7 +174,6 @@ public class Backend {
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 sb.append(myReader.nextLine()).append("\n");
-
             }
             myReader.close();
         } catch (FileNotFoundException e) {
@@ -128,4 +181,15 @@ public class Backend {
         }
         return sb.toString();
     }
+
+    public void end(){
+        if(logWriter!=null){
+            try{
+                this.logWriter.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
 }
+

@@ -1,5 +1,8 @@
 package Grading;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Compare {
     String output;
     String expected;
@@ -17,13 +20,13 @@ public class Compare {
         String[] parts2 = expected.split("\n");
         StringBuilder merged = new StringBuilder();
         // modify this if strings are not of the same size
-        merged.append(String.format("%-100s", "Output:")).append("Expected:\n");
+        merged.append(String.format("%-120s", "Output:")).append("Expected:\n");
         int len = Math.max(parts1.length, parts2.length);
         for (int i=0; i < len; i++) {
-            String part1 = String.format("%-100s", "");
+            String part1 = String.format("%-120s", "");
             String part2 = "";
             if(i<parts1.length) {
-                part1 = String.format("%-100s", parts1[i]);
+                part1 = String.format("%-120s", parts1[i]);
             }
             if(i<parts2.length) {
                 part2 = parts2[i];

@@ -24,6 +24,7 @@ public class Frontend {
     }
 
     public void evaluate(Compare compare){
+        System.out.println("\n"+compare.test.name+": ");
         System.out.println(compare.merge());
         System.out.println("Do you consider it pass? [AnyKey/n]");
         compare.pass = !getInput().contentEquals("n");
@@ -37,16 +38,26 @@ public class Frontend {
         backend.init();
         System.out.println("Loading testcases from "+testDir);
         backend.loadTests(testDir);
-        System.out.println("Start grading? [AnyKey/n]");
-        if(getInput().contentEquals("n")) System.exit(0);
+        System.out.println("Do you want to jump? [y/AnyKey]");
+        if(getInput().contentEquals("y")){
+            System.out.println("Index: ");
+            backend.setCurrent(getInput());
+        }
+        else{
+            System.out.println("Start grading? [AnyKey/n]");
+            Submission.mkdir("Data", "feedback");
+            if(getInput().contentEquals("n")) System.exit(0);
+        }
         while(backend.hasNext()){
             System.out.println();
-            backend.printCurrentInfo();
+            backend.saveCurrentInfo();
             ArrayList<Compare> result = backend.runTests();
             for(Compare compare : result){
                 evaluate(compare);
             }
+            backend.writeFeedback(result);
             backend.next();
         }
+        backend.end();
     }
 }

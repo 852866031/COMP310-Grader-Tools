@@ -1,11 +1,12 @@
 package Grading;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 
-public class Submission {
+public class Submission{
     public final String id;
     public final String filename;
     public String dir;
@@ -20,14 +21,36 @@ public class Submission {
         this.type = type;
     }
 
-    public static ArrayList<Submission> init(String from, String to){
+    public static void unzip(String from, String to){
         ArrayList<Submission> submissions = getZipsFromDirectory(from);
+        unzipScript(submissions, to);
+    }
+
+    public static ArrayList<Submission> init(String from, String to){
+        ArrayList<Submission> submissions = getFoldersFromDirectory("Data/submissions");
+        SubmissionComparator sc = new SubmissionComparator();
+        submissions.sort(sc);
         for(Submission submission : submissions){
-            submission.unzip(to);
             submission.dir = to+"/"+submission.id;
             submission.makeDir = findMakeFile(submission.dir);
             submission.make();
             submission.executable = submission.makeDir+"/mysh";
+        }
+        return submissions;
+    }
+
+    public static ArrayList<Submission> getFoldersFromDirectory(String dir){
+        ArrayList<Submission> submissions = new ArrayList<>();
+        try{
+            File directory = new File(dir);
+            String[] contents = directory.list();
+            assert contents != null;
+            for(String content : contents){
+                if(content.charAt(0)=='.') continue;
+                submissions.add(new Submission(content, content, dir, null));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
         }
         return submissions;
     }
@@ -48,12 +71,15 @@ public class Submission {
                 }
                 tokens = content.split("_");
                 String id = null;
-                for(String token : tokens){
+                for(int i = tokens.length-1; i>=0; i--){
                     try{
-                        Integer.parseInt(token);
-                        id = token;
+                        Integer.parseInt(tokens[i]);
+                        id = tokens[i];
                         break;
                     }catch (Exception ignored){}
+                }
+                if(id == null){
+                    System.err.println(content+"."+type+" id not found");
                 }
                 submissions.add(new Submission(id, content, dir, type.toString()));
             }
@@ -115,29 +141,51 @@ public class Submission {
         }
     }
 
-    public void unzip(String dir){
-        try{
-            mkdir(dir, this.id);
-            if(this.type.contentEquals("zip")){
-                String command = "unzip "+this.dir+"/"+this.filename+"."+this.type+" -d "+ dir+"/"+this.id;
-                Runtime.getRuntime().exec(command).waitFor();
-
+    public static void unzipScript(ArrayList<Submission> submissions, String dir){
+        try {
+            Files.deleteIfExists(Path.of("unzip.sh"));
+            FileWriter myWriter = new FileWriter("unzip.sh");
+            FileWriter script = new FileWriter("unzip.sh");
+            boolean set = new File("unzip.sh").setExecutable(true);
+            for(Submission submission : submissions){
+                if(submission.type.contentEquals("zip")){
+                    String command = "unzip "+submission.dir+ "/'" +submission.filename+"."+submission.type+"' -d "+ dir+"/"+submission.id+"\n";
+                    myWriter.write(command);
+                }
+                else if(submission.type.contentEquals("tar")){
+                    //tar -xf archive.tar -C /opt/files
+                    String command = "tar -xf "+submission.dir+"/'"+submission.filename+"."+submission.type+"' -C "+dir+"/"+submission.id+"\n";
+                    myWriter.write(command);
+                }
             }
-            else if(this.type.contentEquals("tar")){
-                //tar -xf archive.tar -C /opt/files
-                String command = "tar -xf "+this.dir+"/"+this.filename+"."+this.type+" -C "+dir+"/"+this.id;
-                Runtime.getRuntime().exec(command).waitFor();
-            }
-        }catch (Exception e){
+            myWriter.close();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     private void make(){
         try{
-            Runtime.getRuntime().exec("make", null, new File(this.makeDir)).waitFor();
+            if(makeDir==null){
+                System.err.println("Submission: "+this.id+" make directory missing");
+            }
+            else{
+                Runtime.getRuntime().exec("make", null, new File(this.makeDir)).waitFor();
+            }
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public static class SubmissionComparator implements Comparator<Submission> {
+        @Override
+        public int compare(Submission o1, Submission o2) {
+            try{
+                return Integer.compare(Integer.parseInt(o1.id), Integer.parseInt(o2.id));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return 0;
         }
     }
 }
